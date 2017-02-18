@@ -10,8 +10,8 @@ export default function Pulse({
   itemActions,
 }) {
 
-  const { id, updatesCount, content } = item;
-  console.log(itemActions.showUpdates);
+  const { _id: id, updatesCount, content } = item;
+
   const onPulseClick = () => itemActions.showUpdates(id);
 
   return (

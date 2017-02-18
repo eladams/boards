@@ -1,5 +1,5 @@
 import { CALL_API, Schemas } from '../middleware/api';
-import { Schema, arrayOf } from 'normalizr';
+import { schema } from 'normalizr';
 // import { push } from 'react-router-redux';
 const _ = require('lodash');
 
@@ -13,8 +13,8 @@ export function selectPulse(selectedPulseId) {
 }
 
 
-const genericSchema = type => new Schema(type.toLowerCase(), { idAttribute: '_id' });
-const genericArraySchema = type => arrayOf(genericSchema(type));
+const genericSchema = type => new schema.Entity(type.toLowerCase(), {}, { idAttribute: '_id' });
+const genericArraySchema = type => new schema.Array(genericSchema(type));
 
 export function getEntityActionTypes(entityName) {
   return [
@@ -36,11 +36,11 @@ export function getEntityFailureType(entityName) {
   return getEntityActionTypes(entityName)[2];
 }
 
-function fetchEntities(type, nextPageUrl, segmentationKey) {
+function fetchEntities(type, endpointUrl) {
   return {
     [CALL_API]: {
       types: getEntityActionTypes(type),
-      endpoint: nextPageUrl,
+      endpoint: endpointUrl,
       schema: genericArraySchema(type),
     },
   };
@@ -48,7 +48,7 @@ function fetchEntities(type, nextPageUrl, segmentationKey) {
 
 export function loadEntities(entityName, options) {
   return (dispatch, getState) => {
-    return dispatch(fetchEntities(entityName));
+    return dispatch(fetchEntities(entityName, 'pulses'));
   };
 }
 

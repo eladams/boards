@@ -10,7 +10,7 @@ const config = require('../configs/dev.json');
 var server = null;
 
 const collections = {
-  pulses: _.times(12, () => ({
+  pulses: _.times(12000, () => ({
     content: faker.hacker.phrase(),
     updates: _.times(Math.random().toString().slice(2,4), () => ({
       content: faker.hacker.phrase() || [],

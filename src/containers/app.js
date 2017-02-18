@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { selectPulse } from '../actions';
+import {
+  selectPulse,
+  loadEntities,
+} from '../actions';
+
 import _ from 'lodash';
 import faker from 'faker';
 
@@ -15,25 +19,29 @@ import './app.css';
 class App extends Component {
   state = {
     updatesOpen : false,
-    pulses: pulses,
+    // pulses: pulses,
     // selectedPulseId: 0,
   }; // move to props
 
   pulseActions = {
     showUpdates: selectedPulseId => {
       this.props.selectPulse(selectedPulseId);
+
       this.setState({
         updatesOpen: true,
       })
     } // action
   }
 
+  componentWillMount() {
+    this.props.loadEntities('pulses')
+  }
+
   closeUpdates = () => this.setState({ updatesOpen: false }) // action
 
   render() {
-    // selection from state / 'data loader' :
-    const { selectedPulseId } = this.props;
-    const updates = udpatesByPulseId[selectedPulseId] || [];
+    const { selectedPulseId, pulseArray, pulses } = this.props;
+    const updates = pulses[selectedPulseId] && pulses[selectedPulseId].updates || [];
 
     return (
       <div>
@@ -47,7 +55,7 @@ class App extends Component {
           </SidePanel>
           <Main>
             <Board
-              pulses={this.state.pulses}
+              pulses={pulseArray}
               pulseActions={this.pulseActions}
             />
           </Main>
@@ -58,16 +66,27 @@ class App extends Component {
 }
 
 function mapStateToProps(state) { // ,ownProps
-  const { selectedPulseId } = state;
-  console.log(state);
+  const {
+    entities: { pulses },
+    selectedPulseId
+  } = state;
+  console.log({state});
+  const pulseArray = _.keys(pulses).map(id => {
+    const pulse = pulses[id];
+    return _.assign({} , pulse, { updatesCount: pulse.updates.length });
+    // return _.assign({} , pulse, { updatesCount: pulse.updates ? pulse.updates.length : 0 });
+  })
 
   return {
     selectedPulseId,
+    pulseArray,
+    pulses,
   };
 }
 
 export default connect(mapStateToProps, {
   selectPulse,
+  loadEntities,
 })(App);
 
 

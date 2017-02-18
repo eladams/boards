@@ -68,6 +68,7 @@ exports.register = (plugin, options, done) => {
 
     const pulseCollection = db.collection(PULSES);
     return pulseCollection.find({}).toArray();
+    // return pulseCollection.find({}, {updates: false}).toArray();
   };
 
   const insertDocument = (record, collectionName) => {

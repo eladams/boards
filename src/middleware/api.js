@@ -18,6 +18,7 @@ function callApi(endpoint, schema, options) {
     }
 
     const result = normalize(json, schema);
+    console.log(result);
     return _.assign({}, result);
   });
 }
@@ -30,6 +31,8 @@ export const root = API_ROOT;
 // Performs the call and promises when such actions are dispatched.
 export default store => next => action => {
   const callAPI = action[CALL_API];
+
+  console.log({action})
   if (typeof callAPI === 'undefined') {
     return next(action);
   }
