@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import _ from 'lodash'
+import { connect } from 'react-redux';
+import { selectPulse } from '../actions';
+import _ from 'lodash';
 import faker from 'faker';
 
 import { Layout, Main, SidePanel } from '../components/layout'
@@ -14,21 +16,23 @@ class App extends Component {
   state = {
     updatesOpen : false,
     pulses: pulses,
-    selectedPulseId: 0,
+    // selectedPulseId: 0,
   }; // move to props
 
   pulseActions = {
-    showUpdates: selectedPulseId => this.setState({
-      updatesOpen: true,
-      selectedPulseId,
-    }) // action
+    showUpdates: selectedPulseId => {
+      this.props.selectPulse(selectedPulseId);
+      this.setState({
+        updatesOpen: true,
+      })
+    } // action
   }
 
   closeUpdates = () => this.setState({ updatesOpen: false }) // action
 
   render() {
     // selection from state / 'data loader' :
-    const { selectedPulseId } = this.state;
+    const { selectedPulseId } = this.props;
     const updates = udpatesByPulseId[selectedPulseId] || [];
 
     return (
@@ -53,7 +57,19 @@ class App extends Component {
   }
 }
 
-export default App;
+function mapStateToProps(state) { // ,ownProps
+  const { selectedPulseId } = state;
+  console.log(state);
+
+  return {
+    selectedPulseId,
+  };
+}
+
+export default connect(mapStateToProps, {
+  selectPulse,
+})(App);
+
 
 // Data Generation:
 const pulses = _.times(12000, id => ({

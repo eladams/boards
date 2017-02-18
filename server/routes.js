@@ -98,57 +98,6 @@ exports.register = (plugin, options, done) => {
   done();
 }
 
-// const getCollection = (request, reply) => {
-//   const resourceName = getResourceName(request);
-//
-//   methods(request).findFromCollection(queryWithACL, getResourceName(request)
-//   , (err, res) => {
-//     if (err) {
-//       reply(Boom.badImplementation(err));
-//     } else {
-//       Promise.all(
-//         [res.count(), res.toArray()])
-//         .then((results) => {
-//           request.totalCount = results[0];
-//           reply.paginate(results[1]);
-//         }
-//       );
-//     }
-//   });
-// };
-
-// const updateHandler = (request, reply) => {
-//   const replyOnUpdate = (err, res) => {
-//     if (err) {
-//       reply(Boom.badImplementation(err));
-//     } else {
-//       if (res.error) {
-//         reply(res.error);
-//       } else {
-//         reply(res.value ? res : Boom.notFound());
-//       }
-//     }
-//   };
-//
-//   methods(request).updateDocument(
-//     getResourceName(request),
-//     request.params.id,
-//     request.payload,
-//     replyOnUpdate);
-// };
-//
-// const postToCollection = (request, reply) => {
-//
-//   methods(request).insertDocument(request.payload, getResourceName(request), (err, res) => {
-//     if (err) {
-//       reply(Boom.badImplementation(err));
-//     } else {
-//       reply(res);
-//     }
-//   });
-// };
-
-
 exports.register.attributes = {
   name: 'Routes',
   version: '1.0.0',

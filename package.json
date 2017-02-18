@@ -4,6 +4,7 @@
   "private": true,
   "devDependencies": {
     "classnames": "^2.2.5",
+    "handlebars": "^4.0.6",
     "immutable": "^3.8.1",
     "nodemon": "^1.11.0",
     "react-scripts": "0.8.5",
@@ -26,6 +27,7 @@
     "lodash": "^4.17.4",
     "moment": "^2.17.1",
     "mongodb": "^2.2.24",
+    "normalizr": "^3.2.1",
     "react": "^15.4.2",
     "react-addons-shallow-compare": "^15.4.2",
     "react-dom": "^15.4.2",
