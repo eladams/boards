@@ -15,6 +15,26 @@ function entities(state = {
   return state;
 }
 
+function loading(state = {
+  pulses: null,
+}, action) {
+  console.log({action});
+  // Suggest other solution for that:
+  if (action.type.endsWith('REQUEST')) {
+    return merge({}, state, {
+      [action.type.split('_')[0].toLowerCase()]: true
+    });
+  }
+
+  if (action.type.endsWith('SUCCESS') || action.type.endsWith('FAILURE')) {
+    return merge({}, state, {
+      [action.type.split('_')[0].toLowerCase()]: false,
+    });
+  }
+
+  return state;
+}
+
 // Updates error message to notify about the failed fetches.
 function errorMessage(state = null, action) {
   const { type, error } = action;
@@ -37,6 +57,7 @@ function selectedPulseId(state = null, action) { //defines the name of the state
 }
 
 const appReducer = combineReducers({
+  loading,
   entities,
   errorMessage,
   selectedPulseId,

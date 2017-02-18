@@ -68,7 +68,6 @@ export default function ItemList ({
 
 const styles =  {
   row: {
-    paddingTop: 50,
     textAlign: 'left',
   }
 }

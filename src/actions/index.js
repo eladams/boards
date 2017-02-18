@@ -1,4 +1,4 @@
-import { CALL_API, Schemas } from '../middleware/api';
+import { CALL_API } from '../middleware/api';
 import { schema } from 'normalizr';
 // import { push } from 'react-router-redux';
 const _ = require('lodash');
@@ -22,18 +22,6 @@ export function getEntityActionTypes(entityName) {
     `${entityName.toUpperCase()}_SUCCESS`,
     `${entityName.toUpperCase()}_FAILURE`,
   ];
-}
-
-export function getEntityRequestType(entityName) {
-  return getEntityActionTypes(entityName)[0];
-}
-
-export function getEntitySuccessType(entityName) {
-  return getEntityActionTypes(entityName)[1];
-}
-
-export function getEntityFailureType(entityName) {
-  return getEntityActionTypes(entityName)[2];
 }
 
 function fetchEntities(type, endpointUrl) {

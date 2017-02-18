@@ -8,7 +8,7 @@ import {
 import _ from 'lodash';
 import faker from 'faker';
 
-import { Layout, Main, SidePanel } from '../components/layout'
+import { Loader, Layout, Main, SidePanel } from '../components/layout'
 
 import PulseUpdates from '../components/pulse-updates'
 import Board from '../components/board'
@@ -19,8 +19,6 @@ import './app.css';
 class App extends Component {
   state = {
     updatesOpen : false,
-    // pulses: pulses,
-    // selectedPulseId: 0,
   }; // move to props
 
   pulseActions = {
@@ -54,10 +52,14 @@ class App extends Component {
             <PulseUpdates updates={updates}/>
           </SidePanel>
           <Main>
-            <Board
-              pulses={pulseArray}
-              pulseActions={this.pulseActions}
-            />
+            {this.props.loading.pulses ?
+              <Loader text='pulses' />
+              :
+              <Board
+                pulses={pulseArray}
+                pulseActions={this.pulseActions}
+              />
+            }
           </Main>
         </Layout>
       </div>
@@ -68,8 +70,10 @@ class App extends Component {
 function mapStateToProps(state) { // ,ownProps
   const {
     entities: { pulses },
-    selectedPulseId
+    selectedPulseId,
+    loading: loading,
   } = state;
+  console.log(loading)
   console.log({state});
   const pulseArray = _.keys(pulses).map(id => {
     const pulse = pulses[id];
@@ -81,6 +85,7 @@ function mapStateToProps(state) { // ,ownProps
     selectedPulseId,
     pulseArray,
     pulses,
+    loading,
   };
 }
 
@@ -89,16 +94,16 @@ export default connect(mapStateToProps, {
   loadEntities,
 })(App);
 
-
-// Data Generation:
-const pulses = _.times(12000, id => ({
-  id,
-  content: faker.hacker.phrase(),
-  updatesCount: Math.random().toString().slice(2,4),
-}))
-
-const udpatesByPulseId = _.assign(...pulses.map(pulse => ({
-  [pulse.id]: _.times(pulse.updatesCount, () => ({
-    content: faker.hacker.phrase() || [],
-  }))
-})))
+//
+// // Data Generation:
+// const pulses = _.times(12000, id => ({
+//   id,
+//   content: faker.hacker.phrase(),
+//   updatesCount: Math.random().toString().slice(2,4),
+// }))
+//
+// const udpatesByPulseId = _.assign(...pulses.map(pulse => ({
+//   [pulse.id]: _.times(pulse.updatesCount, () => ({
+//     content: faker.hacker.phrase() || [],
+//   }))
+// })))

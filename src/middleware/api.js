@@ -6,6 +6,7 @@ const API_PORT = '8081';
 const API_ROOT = window.location.port ? `http://${window.location.hostname}:${API_PORT}/` : process.env.API_ROOT;
 
 function callApi(endpoint, schema, options) {
+  console.log('callApi');
   const fullUrl = (endpoint.toLowerCase().indexOf('://') === -1) ? API_ROOT + endpoint : endpoint;
 
   return fetch(fullUrl, options)
@@ -27,23 +28,38 @@ function callApi(endpoint, schema, options) {
 export const CALL_API = Symbol('Call API');
 export const root = API_ROOT;
 
+
 // A Redux middleware that interprets actions with CALL_API info specified.
 // Performs the call and promises when such actions are dispatched.
+
+// Do you think WTF?
+// well the middleware is wrapping a dispatch call to the store:
+// store.dispatch
 export default store => next => action => {
   const callAPI = action[CALL_API];
 
-  console.log({action})
+  // 1. continue
   if (typeof callAPI === 'undefined') {
     return next(action);
   }
 
   let { endpoint } = callAPI;
-  const { schema, types, options, request, revert } = callAPI;
 
+  const {
+    schema,
+    types,
+    options,
+    // request,
+    // revert, // previous to api call (not in use)
+  } = callAPI;
+
+
+  // not in use:
   if (typeof endpoint === 'function') {
     endpoint = endpoint(store.getState());
   }
 
+  // Warnings:
   if (typeof endpoint !== 'string') {
     throw new Error('Specify a string endpoint URL.');
   }
@@ -58,31 +74,22 @@ export default store => next => action => {
     throw new Error('Expected action types to be strings.');
   }
 
-  function actionWith(data) {
-    const finalAction = _.assign({}, action, data);
-    delete finalAction[CALL_API];
-    return finalAction;
-  }
-
   const [requestType, successType, failureType] = types;
-  next(actionWith({
+
+  next({
     type: requestType,
-    request,
-  }));
+  });
 
   return callApi(endpoint, schema, options).then(
-    response => next(actionWith({
+    response => next({
       type: successType,
-      request,
       response,
-    })),
-    error => next(actionWith({
+    }),
+    error => next({
       type: failureType,
       error: error.error || error || 'Something went wrong',
       statusCode: error.statusCode,
       serverRequest: error.payload,
-      request,
-      revert,
-    })),
+    }),
   );
 };
