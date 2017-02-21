@@ -7,6 +7,7 @@
     "handlebars": "^4.0.6",
     "immutable": "^3.8.1",
     "nodemon": "^1.11.0",
+    "pushstate-server": "^2.2.1",
     "react-scripts": "0.8.5",
     "react-sortable-hoc": "^0.4.12",
     "redux-devtools": "^3.3.2"
@@ -41,6 +42,7 @@
   "scripts": {
     "start": "react-scripts start",
     "server-dev": "nodemon server/bin.js configs/dev.json",
+    "test-build": "pushstate-server build",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"

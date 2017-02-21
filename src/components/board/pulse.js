@@ -22,7 +22,7 @@ export default function Pulse({
         color: `hsl(${(index * (360 / 120) % 360)},60%,25%)`,
       })}
     >
-      <span>{content}</span>
+      <span style={{paddingLeft: 10}}>{content}</span>
       {updatesCount > 0 &&
         <span onClick={onPulseClick} className='bong pulse-item-updates-counter'>{updatesCount}</span>
       }

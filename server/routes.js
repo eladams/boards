@@ -4,12 +4,9 @@ const objectId = require('mongodb').ObjectID;
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
 const Boom = require('boom');
-const ReadableStream = require('stream').Readable;
 const _ = require('lodash');
-const fs = require('fs');
 const path = require('path');
 const async = require('async');
-const moment = require('moment');
 const Schemas = require('./schemas');
 
 const GET = 'get';
@@ -27,8 +24,6 @@ const getValidation = (resource, method) => {
         query: {
           limit: Joi.number().integer(),
           page: Joi.number().integer(),
-          pulse_ref: Joi.string(),
-          board_ref: Joi.string(),
           ids: Joi.array().items(Joi.objectId()).single(),
         },
       };
@@ -63,12 +58,22 @@ exports.register = (plugin, options, done) => {
 
   const db = plugin.mongo.db;
 
-
-  const getPulses = (queryOptions) => {
+  const getPulses = query => {
+    const queryOptions = {
+      limit: query.limit,
+      sort: [['_id', 1]],
+      skip: query.limit * (query.page - 1),
+    };
+    const dataQuery = _.cloneDeep(query);
+    delete dataQuery.limit;
+    delete dataQuery.page;
+    delete dataQuery.pagination;
 
     const pulseCollection = db.collection(PULSES);
-    return pulseCollection.find({}).toArray();
-    // return pulseCollection.find({}, {updates: false}).toArray();
+
+    const res = pulseCollection.find(dataQuery, {}, queryOptions);
+
+    return Promise.all([res.count(), res.toArray()])
   };
 
   const insertDocument = (record, collectionName) => {
@@ -89,10 +94,15 @@ exports.register = (plugin, options, done) => {
   plugin.route({
     method: GET,
     path: `/${PULSES}`,
-    handler: (request, reply) => getPulses().then((res) => reply(res)),
+    handler: (request, reply) =>
+      getPulses(request.query)
+      .then(results => {
+        request.totalCount = results[0];
+        reply.paginate(results[1]);
+      }),
     config: {
       // validate: getValidation(PULSES, GET),
-      // plugins: { pagination: { defaults: { limit: routes[resource].maxPageSize } } },
+      plugins: { pagination: { defaults: { limit: 10 } } },
     },
   });
 
@@ -100,6 +110,6 @@ exports.register = (plugin, options, done) => {
 }
 
 exports.register.attributes = {
-  name: 'Routes',
+  name: 'Pulses',
   version: '1.0.0',
 };

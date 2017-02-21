@@ -24,20 +24,26 @@ export function getEntityActionTypes(entityName) {
   ];
 }
 
-function fetchEntities(type, endpointUrl) {
+function fetchEntities(entityName, endpointUrl) {
   return {
     [CALL_API]: {
-      types: getEntityActionTypes(type),
+      types: getEntityActionTypes(entityName),
       endpoint: endpointUrl,
-      schema: genericArraySchema(type),
+      schema: genericArraySchema(entityName),
     },
   };
 }
 
-export function loadEntities(entityName, options) {
+export function loadEntities(entityName, options = { loadNextPage: true}) {
   return (dispatch, getState) => {
-    return dispatch(fetchEntities(entityName, 'pulses'));
-  };
+    const { pagination: { [`${entityName}Pagination`]: { nextPageUrl } }} = getState();
+    if (nextPageUrl === null) {
+      return;
+    }
+    const endpointUrl = nextPageUrl || entityName;
+    dispatch(fetchEntities(entityName, endpointUrl))
+
+  }
 }
 
 

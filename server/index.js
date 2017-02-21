@@ -32,14 +32,14 @@ function createServer(options, callback) {
     },
     port: 8081,
     // to be seen on local lan use 0.0.0.0 for local only 127.0.0.1
-    host: isProduction ? undefined : '127.0.0.1',
+    host: isProduction ? undefined : '0.0.0.0',
   });
 
   server.decorate('server', 'config', () => settings);
 
   server.register([
     { register: require('hapi-mongodb'), options: { url: settings.db.url, decorate: true } },
-    // { register: require('hapi-pagination'), options: paginationOptions },
+    { register: require('hapi-pagination'), options: paginationOptions },
     Blipp,
     Routes,
   ], err => callback(err, server));

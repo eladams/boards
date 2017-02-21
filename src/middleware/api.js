@@ -17,10 +17,10 @@ function callApi(endpoint, schema, options) {
     if (!response.ok) {
       //handle errors
     }
-
-    const result = normalize(json, schema);
+    console.log(json);
+    const result = normalize(json.results, schema);
     console.log(result);
-    return _.assign({}, result);
+    return _.assign({}, result, json.meta);
   });
 }
 
@@ -49,6 +49,7 @@ export default store => next => action => {
     schema,
     types,
     options,
+    page,
     // request,
     // revert, // previous to api call (not in use)
   } = callAPI;
@@ -78,12 +79,14 @@ export default store => next => action => {
 
   next({
     type: requestType,
+    key: schema.schema.key,
   });
 
   return callApi(endpoint, schema, options).then(
     response => next({
       type: successType,
       response,
+      key: schema.schema.key,
     }),
     error => next({
       type: failureType,

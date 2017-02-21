@@ -35,6 +35,8 @@ class App extends Component {
     this.props.loadEntities('pulses')
   }
 
+  loadMore = () => this.props.loadEntities('pulses')
+
   closeUpdates = () => this.setState({ updatesOpen: false }) // action
 
   render() {
@@ -52,7 +54,7 @@ class App extends Component {
             <PulseUpdates updates={updates}/>
           </SidePanel>
           <Main>
-            {this.props.loading.pulses ?
+            {((this.props.pulsesPagination.isFetching) && (pulseArray.length == 0)) ?
               <Loader text='pulses' />
               :
               <Board
@@ -61,6 +63,7 @@ class App extends Component {
               />
             }
           </Main>
+          <div style={{ bottom: 20, position: 'fixed', background: 'white', padding: 20, width: '100%', cursor: 'pointer'}} onClick={this.loadMore}>Load More</div>
         </Layout>
       </div>
     );
@@ -69,23 +72,22 @@ class App extends Component {
 
 function mapStateToProps(state) { // ,ownProps
   const {
+    pagination: { pulsesPagination },
     entities: { pulses },
     selectedPulseId,
-    loading: loading,
   } = state;
-  console.log(loading)
   console.log({state});
   const pulseArray = _.keys(pulses).map(id => {
     const pulse = pulses[id];
     return _.assign({} , pulse, { updatesCount: pulse.updates.length });
     // return _.assign({} , pulse, { updatesCount: pulse.updates ? pulse.updates.length : 0 });
   })
-
+  console.log(pulseArray.length);
   return {
+    pulsesPagination,
     selectedPulseId,
     pulseArray,
     pulses,
-    loading,
   };
 }
 

@@ -3,6 +3,7 @@ import * as ActionTypes from '../actions';
 import merge from 'lodash/merge';
 import cloneDeep from 'lodash/cloneDeep';
 import { routerReducer } from 'react-router-redux';
+import paginate from './paginate'
 
 
 // Updates an entity cache in response to any action with response.entities.
@@ -12,26 +13,6 @@ function entities(state = {
   if (action.response && action.response.entities) {
     return merge({}, state, action.response.entities);
   }
-  return state;
-}
-
-function loading(state = {
-  pulses: null,
-}, action) {
-  console.log({action});
-  // Suggest other solution for that:
-  if (action.type.endsWith('REQUEST')) {
-    return merge({}, state, {
-      [action.type.split('_')[0].toLowerCase()]: true
-    });
-  }
-
-  if (action.type.endsWith('SUCCESS') || action.type.endsWith('FAILURE')) {
-    return merge({}, state, {
-      [action.type.split('_')[0].toLowerCase()]: false,
-    });
-  }
-
   return state;
 }
 
@@ -56,12 +37,19 @@ function selectedPulseId(state = null, action) { //defines the name of the state
   }
 }
 
+// Updates the pagination data for different actions.
+const pagination = combineReducers({
+  pulsesPagination: paginate({
+    types: ActionTypes.getEntityActionTypes('pulses'),
+  }),
+});
+
 const appReducer = combineReducers({
-  loading,
+  pagination,
   entities,
   errorMessage,
   selectedPulseId,
-  routing: routerReducer,
+  routing: routerReducer, // not in use for current example
 });
 
 const rootReducer = (state, action) => {

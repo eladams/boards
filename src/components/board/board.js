@@ -4,7 +4,8 @@ import Pulse from './pulse'
 
 export default function Board({
   pulses,
-  pulseActions
+  pulseActions,
+  loadNextPage,
 }) {
   return (
     <ItemList

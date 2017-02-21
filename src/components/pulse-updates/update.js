@@ -14,7 +14,7 @@ export default function Update({
 
   return (
     <div
-      // className='bong-rotate'
+      className='bong-rotate'
       style={_.merge(style, styles.row, {
         color: `hsl(${(index * (360 / 120) % 360)},100%,50%)`,
       })}
